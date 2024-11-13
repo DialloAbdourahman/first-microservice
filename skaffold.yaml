@@ -1,0 +1,58 @@
+apiVersion: skaffold/v2alpha3
+kind: Config
+deploy:
+  kubectl:
+    manifests:
+      - ./infra/k8s/* # when we start skaffold, it will apply all these objects and when we stop skaffold, it will stop all these objects.
+build:
+  local:
+    push: false # We disable skaffold from push images to dockerhub when ever there is a change. it is the default behaviour
+  artifacts:
+    - image: dialloabdourahman/client
+      context: client
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: 'src/**/*.js' # If we make a change to a js file, skaffold will take that file and copy it to the pod. (File syncing)
+            dest: . # If we make anychange that doesn't match the rule above, skaffold will rebuild the image. e.g installing a package will change the package.json and will rebuild the image.
+    - image: dialloabdourahman/comments
+      context: comments
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: dialloabdourahman/moderation
+      context: moderation
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: dialloabdourahman/query
+      context: query
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: dialloabdourahman/posts
+      context: posts
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .
+    - image: dialloabdourahman/event-bus
+      context: event-bus
+      docker:
+        dockerfile: Dockerfile
+      sync:
+        manual:
+          - src: '*.js'
+            dest: .

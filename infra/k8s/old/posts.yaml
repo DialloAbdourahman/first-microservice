@@ -1,0 +1,9 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: posts # name of the pod
+spec:
+  containers:
+    - name: posts # name of the container and we gave it the same as the pod as we assume that one pod will run only one container.
+      image: dialloabdourahman/posts
+      # imagePullPolicy: IfNotPresent

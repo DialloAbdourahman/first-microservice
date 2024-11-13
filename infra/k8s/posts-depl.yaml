@@ -1,0 +1,40 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: posts-depl
+spec:
+  replicas: 1
+  selector: # tells the deployment how to find all all pods that it has to manage.
+    matchLabels:
+      app: posts # manage pods with the label posts
+  template: # config of the pod.
+    metadata:
+      labels:
+        app: posts # match the selector above too.
+    spec: # tell the pod how to behave
+      containers:
+        - name: posts # this is important for logging purpose.
+          image: dialloabdourahman/posts # same as image: dialloabdourahman/posts:latest
+          imagePullPolicy: IfNotPresent
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: posts-clusterip-srv
+spec:
+  type: ClusterIP # the default service is a clusterip. even if we don't specify the type it will default to clusterip
+  selector:
+    app: posts # still selects the label above.
+  ports:
+    - name: posts
+      protocol: TCP
+      port: 4000
+      targetPort: 4000
+# nodeport: Listens for external request on all worker nodes on nodeip:nodeport and forwards the request to port.
+
+# ClusterIP: Request comes through ingress and points to service name and port.
+
+# port: Internal cluster service port for container and listens for incoming request from the nodeport and forwards to targetPort.
+
+# targetPort: Receives the request from port and forwards to container pod(port) where it's listening. Even if you don't specify this will get by default assigned the same port numbers as port.
